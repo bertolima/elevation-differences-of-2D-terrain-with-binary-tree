@@ -1,5 +1,6 @@
 import pygame
 from Tree import binaryTree
+import numpy as np
 
 class Screen:
     def __init__(self):
@@ -14,41 +15,39 @@ class Screen:
 
         self.tree = None
         self.pixelList = None
+
+        self.canDraw = True
         self.renderTreeB = True
         self.renderImageB = False
+        self.renderImageFiltered = False
+
         self.treeBackGround = None
-        self.treeDepth = 5
+        self.treeDepth = 1
+        self.treeUpdated = False
 
         self.initVariables()
         self.initWindow()
+        self.initTree()
 
     def initWindow(self):
         self.window = pygame.display.set_mode((self.width, self.height))
-
+        self.pixelList = self.imp.convert()
+        
     def initVariables(self):
         self.running = True
         pygame.init()
 
-        self.imp = pygame.image.load("DEMs/test2.jpg")
+        self.imp = pygame.image.load("DEMs/Terreno1K.png")
+
         self.width = self.imp.get_width()
         self.height = self.imp.get_height()
 
         self.treeBackGround = pygame.Surface((self.width, self.height))
-        self.player_pos = pygame.Vector2( self.width / 2,  self.height / 2)
-        self.tree = binaryTree(self.width, self.height, self.treeDepth)
-
         self.clock = pygame.time.Clock()
-    
-    def renderTree(self):
-        if(self.renderTreeB):
-            self.treeBackGround.fill("black")
-            self.tree.draw(self.treeBackGround, self.treeDepth)
-            self.treeBackGround = self.treeBackGround.convert()
-            self.renderTreeB = False
-        if (self.renderImageB):
-            self.window.blit(self.imp, (0,0))
-        else:
-            self.window.blit(self.treeBackGround, (0,0))
+
+    def initTree(self):
+        self.tree = binaryTree(self.width, self.height, self.treeDepth, self.pixelList)
+        self.tree.subdivide()
 
     def poolEvent(self):
         for event in pygame.event.get():
@@ -63,51 +62,77 @@ class Screen:
                     self.pressDown()
                 elif(event.key == pygame.K_RIGHT):
                     self.pressRight()
+                elif(event.key == pygame.K_LEFT):
+                    self.pressLeft()
 
-    def updatePlayerPosition(self):
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_w]:
-            self.player_pos.y -= 300 * self.dt
-        if keys[pygame.K_s]:
-            self.player_pos.y += 300 * self.dt
-        if keys[pygame.K_a]:
-            self.player_pos.x -= 300 * self.dt
-        if keys[pygame.K_d]:
-            self.player_pos.x += 300 * self.dt
-    # def updateTree(self):
-#       self.tree.subdivide()
+    def updateTree(self):
+        if (not self.treeUpdated):
+            self.tree.calculateError(self.pixelList, self.width)
+            self.treeUpdated = True
+
+    def renderTree(self):
+        if (self.canDraw):
+            if(self.renderTreeB):
+                self.treeBackGround.fill("black")
+                self.tree.draw(self.treeBackGround)
+                self.treeBackGround = self.treeBackGround.convert()
+                self.canDraw = False
+
+            elif(self.renderImageFiltered):
+                self.treeBackGround.fill("black")
+                self.tree.drawErro(self.treeBackGround)
+                self.treeBackGround = self.treeBackGround.convert()
+                self.canDraw = False
+
+        if (self.renderImageB):
+            self.window.blit(self.imp, (0,0))
+
+        else:
+            self.window.blit(self.treeBackGround, (0,0))
+
     def pressUp(self):
-        self.treeDepth+=1
-        self.tree.addDepth()
-        self.renderTreeB = True
+        if (self.renderTreeB):
+            self.tree.addDepth(self.pixelList, self.width)
+            self.canDraw = True
+        
     
     def pressDown(self):
-        self.treeDepth-=1
-        self.tree.removeDepth()
-        self.renderTreeB = True
-
+        if (self.renderTreeB):
+            self.tree.removeDepth()
+            self.canDraw = True
+        
     def pressRight(self):
+        self.canDraw = True
         if(self.renderImageB):
             self.renderImageB = False
+            self.renderImageFiltered = True
+        elif(self.renderImageFiltered):
+            self.renderImageFiltered = False
+            self.renderTreeB = True
         else:
             self.renderImageB = True
-
-
-
-    def renderPlayer(self):
-        pygame.draw.circle( self.window, "red", self.player_pos, 40)
+            self.renderTreeB = False
+            
+    def pressLeft(self):
+        self.canDraw = True
+        if(self.renderImageB):
+            self.renderImageB = False
+            self.renderTreeB = True
+        elif(self.renderImageFiltered):
+            self.renderImageFiltered = False
+            self.renderImageB = True
+        else:
+            self.renderImageFiltered = True
+            self.renderTreeB = False
 
     def update(self):
         self.poolEvent()
-        self.updatePlayerPosition()
-        # self.updateTree()
+        self.updateTree()
         
     def render(self):
         self.window.fill("black")
 
         self.renderTree()
-        self.renderPlayer()
-        
         
         pygame.display.flip()
         self.dt = self.clock.tick(144) / 1000
