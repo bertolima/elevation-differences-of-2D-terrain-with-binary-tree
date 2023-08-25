@@ -11,7 +11,6 @@ class Screen:
         self.clock = None
         self.player_pos = None
         self.running = False
-        self.dt = 0
 
         self.tree = None
         self.pixelList = None
@@ -22,7 +21,8 @@ class Screen:
         self.renderImageFiltered = False
 
         self.treeBackGround = None
-        self.treeDepth = 1
+        self.treeDepth = 15
+        self.flag = 6
         self.treeUpdated = False
 
         self.initVariables()
@@ -80,7 +80,7 @@ class Screen:
 
             elif(self.renderImageFiltered):
                 self.treeBackGround.fill("black")
-                self.tree.drawErro(self.treeBackGround)
+                self.tree.drawErro(self.treeBackGround, self.flag)
                 self.treeBackGround = self.treeBackGround.convert()
                 self.canDraw = False
 
@@ -94,12 +94,20 @@ class Screen:
         if (self.renderTreeB):
             self.tree.addDepth(self.pixelList, self.width)
             self.canDraw = True
+        elif(self.renderImageFiltered):
+            if(self.flag <=51):
+                self.flag += 5
+                self.canDraw = True
         
     
     def pressDown(self):
         if (self.renderTreeB):
             self.tree.removeDepth()
             self.canDraw = True
+        elif(self.renderImageFiltered):
+            if(self.flag>=5):
+                self.flag -= 5
+                self.canDraw = True
         
     def pressRight(self):
         self.canDraw = True

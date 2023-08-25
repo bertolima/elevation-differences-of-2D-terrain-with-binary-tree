@@ -28,17 +28,9 @@ class Triangle:
         return ((self.p1[0]+self.p2[0])/2, (self.p1[1]+self.p2[1])/2)
     
     def draw(self, window):
-        if(self.depth == 1):
-            pygame.draw.line(window, "white", self.p1, self.p2)
-            pygame.draw.line(window, "white", self.p1, self.p3)
-            pygame.draw.line(window, "white", self.p2, self.p3)  
-        pygame.draw.aaline(window, "white", self.p3, self.pM)
+            pygame.draw.aaline(window, "white", self.p3, self.pM)
     
     def drawErro(self, window):
-        if(self.depth == 1):
-            pygame.draw.line(window, "white", self.p1, self.p2)
-            pygame.draw.line(window, "white", self.p1, self.p3)
-            pygame.draw.line(window, "white", self.p2, self.p3)
         pygame.draw.aaline(window, "white", self.p3, self.pM)
 
         if (self.erro > 15):
@@ -77,8 +69,8 @@ class Triangle:
         y1 = int(max(self.p1[1], self.p2[1], self.p3[1]))
 
         #loop que faz o calculo do numero de pixels percorridos e o valor total da intensidade desses pixels
-        for x in range(x3, x2, 1):
-            for y in range(y3, y1, 1):
+        for x in range(x3, x2, 2):
+            for y in range(y3, y1, 2):
                 if (self.contains((x,y))):
                     intensidade = pixel_data.get_at((x,y)).r
                     sum += intensidade
@@ -102,5 +94,10 @@ class Triangle:
     
     def getErro(self):
         return self.erro
+    
+    def drawStart(self, window):
+        pygame.draw.line(window, "white", self.p1, self.p2)
+        pygame.draw.line(window, "white", self.p1, self.p3)
+        pygame.draw.line(window, "white", self.p2, self.p3)
 
     

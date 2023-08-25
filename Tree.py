@@ -18,32 +18,36 @@ class binaryTree:
 		parent:list[Triangle] = deque()
 		parent.append(self.left)
 		parent.append(self.right)
+		self.left.drawStart(window)
+		self.right.drawStart(window)
+
 		child:list[Triangle] = deque()
-		for i in range(self.depth-1):
+
+		for i in range(1, self.depth):
 			for node in parent:
 				node.draw(window)
 				child.append(node.getLeft())
 				child.append(node.getRight())
-
 			parent = child
 			child:list[Triangle] = deque()
-		[objeto.draw(window) for objeto in parent]
 	
-	def drawErro(self, window):
+	def drawErro(self, window, flag):
 		parent:list[Triangle] = deque()
 		parent.append(self.left)
 		parent.append(self.right)
+		self.left.drawStart(window)
+		self.right.drawStart(window)
+
 		child:list[Triangle] = deque()
-		for i in range(self.depth-1):
+
+		for i in range(1, self.depth):
 			for node in parent:
-				if(node.getErro() > 20):
+				if(node.getErro() > flag):
 					node.draw(window)
 					child.append(node.getLeft())
 					child.append(node.getRight())
-
 			parent = child
 			child:list[Triangle] = deque()
-		[objeto.draw(window) for objeto in parent if objeto.getErro() > 20]
 	
 	def subdivide(self):
 		parent:list[Triangle] = deque()
@@ -71,7 +75,7 @@ class binaryTree:
 
 	def addDepth(self, pixelList, width):
 		size = self.imgWidth * self.imgWidth
-		triangles = 2 * pow(2, self.depth-1)
+		triangles = 2 * pow(2, self.depth-2)
 		if(triangles < size):
 			self.depth+=1
 			self.left.addDepth(self.depth, pixelList, width, self.objects)
