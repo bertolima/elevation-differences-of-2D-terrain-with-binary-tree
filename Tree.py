@@ -14,6 +14,30 @@ class binaryTree:
 
 		self.objects = [None] * (2*(pow(2,self.depth)-1))
 	
+	def subdivide(self):
+		parent:list[Triangle] = deque()
+		parent.append(self.left)
+		parent.append(self.right)
+		child:list[Triangle] = deque()
+		self.objects[0] = self.left
+		self.objects[1] = self.right
+		j = 2
+		for i in range(self.depth-1):
+			for node in parent:
+				node.subdivide()
+				child.append(node.getLeft())
+				child.append(node.getRight())
+				self.objects[j] = node.getLeft()
+				j +=1
+				self.objects[j] = node.getRight()
+				j +=1
+
+			parent = child
+			child:list[Triangle] = deque()
+		
+	def calculateError(self, pixelList, width):
+		[objeto.calcularIntensidadeMedia(pixelList, width) for objeto in self.objects]
+
 	def draw(self, window):
 		parent:list[Triangle] = deque()
 		parent.append(self.left)
@@ -48,30 +72,6 @@ class binaryTree:
 					child.append(node.getRight())
 			parent = child
 			child:list[Triangle] = deque()
-	
-	def subdivide(self):
-		parent:list[Triangle] = deque()
-		parent.append(self.left)
-		parent.append(self.right)
-		child:list[Triangle] = deque()
-		self.objects[0] = self.left
-		self.objects[1] = self.right
-		j = 2
-		for i in range(self.depth-1):
-			for node in parent:
-				node.subdivide()
-				child.append(node.getLeft())
-				child.append(node.getRight())
-				self.objects[j] = node.getLeft()
-				j +=1
-				self.objects[j] = node.getRight()
-				j +=1
-
-			parent = child
-			child:list[Triangle] = deque()
-		
-	def calculateError(self, pixelList, width):
-		[objeto.calcularIntensidadeMedia(pixelList, width) for objeto in self.objects]
 
 	def addDepth(self, pixelList, width):
 		size = self.imgWidth * self.imgWidth

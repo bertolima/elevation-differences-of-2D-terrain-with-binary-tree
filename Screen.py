@@ -64,32 +64,6 @@ class Screen:
                     self.pressRight()
                 elif(event.key == pygame.K_LEFT):
                     self.pressLeft()
-
-    def updateTree(self):
-        if (not self.treeUpdated):
-            self.tree.calculateError(self.pixelList, self.width)
-            self.treeUpdated = True
-
-    def renderTree(self):
-        if (self.canDraw):
-            if(self.renderTreeB):
-                self.treeBackGround.fill("black")
-                self.tree.draw(self.treeBackGround)
-                self.treeBackGround = self.treeBackGround.convert()
-                self.canDraw = False
-
-            elif(self.renderImageFiltered):
-                self.treeBackGround.fill("black")
-                self.tree.drawErro(self.treeBackGround, self.flag)
-                self.treeBackGround = self.treeBackGround.convert()
-                self.canDraw = False
-
-        if (self.renderImageB):
-            self.window.blit(self.imp, (0,0))
-
-        else:
-            self.window.blit(self.treeBackGround, (0,0))
-
     def pressUp(self):
         if (self.renderTreeB):
             self.tree.addDepth(self.pixelList, self.width)
@@ -132,6 +106,31 @@ class Screen:
         else:
             self.renderImageFiltered = True
             self.renderTreeB = False
+
+    def updateTree(self):
+        if (not self.treeUpdated):
+            self.tree.calculateError(self.pixelList, self.width)
+            self.treeUpdated = True
+
+    def renderTree(self):
+        if (self.canDraw):
+            if(self.renderTreeB):
+                self.treeBackGround.fill("black")
+                self.tree.draw(self.treeBackGround)
+                self.treeBackGround = self.treeBackGround.convert()
+                self.canDraw = False
+
+            elif(self.renderImageFiltered):
+                self.treeBackGround.fill("black")
+                self.tree.drawErro(self.treeBackGround, self.flag)
+                self.treeBackGround = self.treeBackGround.convert()
+                self.canDraw = False
+
+        if (self.renderImageB):
+            self.window.blit(self.imp, (0,0))
+
+        else:
+            self.window.blit(self.treeBackGround, (0,0))
 
     def update(self):
         self.poolEvent()

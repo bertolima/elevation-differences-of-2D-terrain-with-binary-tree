@@ -2,39 +2,32 @@ import pygame
 
 class Triangle:
     def __init__(self, p1, p2, p3, depth:int):
-        #pontos que formam o triangulo
+        #points
         self.p1 = p1
         self.p2 = p2
         self.p3 = p3
 
-        #calculo de ponto medio da hipotenusa
+        #calculate hypotenuse's middle point
         self.pM = self.calculateMiddlePoint()
 
-        #pointer pra Null
+        #pointer to Null
         self.erro = None
 
-        #profundidade do nó atual
+        #current depth
         self.depth = depth
 
-        #pointer pros filhos direito e esquerdo
+        #pointer to children
         self.left:Triangle = None
         self.right:Triangle = None
 
+    #split into two new nodes with current depth + 1 
     def subdivide(self):
         self.left = Triangle(self.p1, self.p3, self.pM, self.depth+1)
         self.right = Triangle(self.p2, self.p3, self.pM, self.depth+1)
 
+    #self explanatory
     def calculateMiddlePoint(self):
         return ((self.p1[0]+self.p2[0])/2, (self.p1[1]+self.p2[1])/2)
-    
-    def draw(self, window):
-            pygame.draw.aaline(window, "white", self.p3, self.pM)
-    
-    def drawErro(self, window):
-        pygame.draw.aaline(window, "white", self.p3, self.pM)
-
-        if (self.erro > 15):
-            pygame.draw.aaline(window, "white", self.p3, self.pM)
 
     def addDepth(self, maxDepth, pixelList, width, objectsList):
         if (self.depth == maxDepth-1):
@@ -47,7 +40,8 @@ class Triangle:
         else:
             self.left.addDepth(maxDepth, pixelList, width, objectsList)
             self.right.addDepth(maxDepth, pixelList, width, objectsList)
-    
+            
+    #tell us if a point is inside the triangle
     def contains(self, p):
         orientacao1 = (self.p2[0] - self.p1[0]) * (p[1] - self.p1[1]) - (p[0] - self.p1[0]) * (self.p2[1] - self.p1[1])
         orientacao2 = (self.p3[0] - self.p2[0]) * (p[1] - self.p2[1]) - (p[0] - self.p2[0]) * (self.p3[1] - self.p2[1])
@@ -57,6 +51,7 @@ class Triangle:
             return True
         return False
     
+    #calculate the average of the intensity of the pixels of the triangle
     def calcularIntensidadeMedia(self, pixel_data, imgWidth):
         eMin = 256
         eMax = 0
@@ -86,6 +81,22 @@ class Triangle:
 
         self.erro = max(abs(eMin - eMed), abs(eMax - eMed))
 
+    #the first triangles need to be drawn in full
+    def drawStart(self, window):
+        pygame.draw.line(window, "white", self.p1, self.p2)
+        pygame.draw.line(window, "white", self.p1, self.p3)
+        pygame.draw.line(window, "white", self.p2, self.p3)
+
+    #draw a line from right angle to hypotenuse's middle point (we just need to draw that lane to represent the triangle)`
+    def draw(self, window):
+            pygame.draw.aaline(window, "white", self.p3, self.pM)
+    
+    def drawErro(self, window):
+        pygame.draw.aaline(window, "white", self.p3, self.pM)
+
+        if (self.erro > 15):
+            pygame.draw.aaline(window, "white", self.p3, self.pM)
+
     def getLeft(self):
         return self.left
     
@@ -95,9 +106,6 @@ class Triangle:
     def getErro(self):
         return self.erro
     
-    def drawStart(self, window):
-        pygame.draw.line(window, "white", self.p1, self.p2)
-        pygame.draw.line(window, "white", self.p1, self.p3)
-        pygame.draw.line(window, "white", self.p2, self.p3)
+    
 
     
