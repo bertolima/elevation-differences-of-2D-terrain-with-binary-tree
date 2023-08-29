@@ -69,8 +69,8 @@ class Triangle:
         y1 = int(max(self.p1[1], self.p2[1], self.p3[1]))
 
         #loop que faz o calculo do numero de pixels percorridos e o valor total da intensidade desses pixels
-        for x in range(x3, x2, 2):
-            for y in range(y3, y1, 2):
+        for x in range(x3, x2, 1):
+            for y in range(y3, y1, 1):
                 if (self.contains((x,y))):
                     intensidade = pixel_data.get_at((x,y)).r
                     sum += intensidade
