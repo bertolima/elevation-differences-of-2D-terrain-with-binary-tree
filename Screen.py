@@ -1,9 +1,10 @@
 import pygame
 from Tree import binaryTree
-import numpy as np
 
+
+#just screen controller
 class Screen:
-    def __init__(self):
+    def __init__(self, img):
         self.width = None
         self.height = None
 
@@ -25,7 +26,7 @@ class Screen:
         self.flag = 6
         self.treeUpdated = False
 
-        self.initVariables()
+        self.initVariables(img)
         self.initWindow()
         self.initTree()
 
@@ -33,11 +34,11 @@ class Screen:
         self.window = pygame.display.set_mode((self.width, self.height))
         self.pixelList = self.imp.convert()
         
-    def initVariables(self):
+    def initVariables(self, img):
         self.running = True
         pygame.init()
 
-        self.imp = pygame.image.load("DEMs/Terreno1K.png")
+        self.imp = pygame.image.load(img)
 
         self.width = self.imp.get_width()
         self.height = self.imp.get_height()
