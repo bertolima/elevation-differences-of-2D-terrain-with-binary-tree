@@ -33,5 +33,6 @@ pip install numpy
 
 ## Referências bibliográficas
 Pygame, **Pygame Documentation**.https://www.pygame.org/docs/
+
 Pixel and Intensy, **Overview** .https://www.thermofisher.com/br/en/home/life-science/cell-analysis/cell-analysis-learning-center/molecular-probes-school-of-fluorescence/imaging-basics/capturing-analyzing-your-samples/pixels-intensity.html
 ## 
